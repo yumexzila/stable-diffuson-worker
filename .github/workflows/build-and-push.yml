@@ -1,0 +1,28 @@
+name: Build & Push Docker Image
+
+on:
+  push:
+    branches:
+      - main # This workflow runs when you push to the 'main' branch
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest # Use the latest Ubuntu environment
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4 # Get your code from the repository
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }} # Uses the DOCKER_USERNAME secret you added
+        password: ${{ secrets.DOCKER_PASSWORD }} # Uses the DOCKER_PASSWORD secret you added
+
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        context: . # Looks for Dockerfile in the current directory (root of your repo)
+        push: true # Push the image to Docker Hub
+        tags: yumexzila/stable-diffusion-worker:latest # Tag the image with your Docker Hub username and repository name
+        file: ./Dockerfile # Specify the Dockerfile location (in the root)
